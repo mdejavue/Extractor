@@ -1,7 +1,93 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="lib/rt.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://docs.oracle.com/javase/7/docs/api"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="lib/webarchive-commons-jar-with-dependencies.jar"/>
-	<classpathentry kind="lib" path="lib/rt.jar"/>
+	<classpathentry kind="lib" path="lib/apache-any23-api-0.9.0.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://any23.apache.org/apidocs/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/apache-any23-core-0.9.0.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://any23.apache.org/apidocs/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/apache-any23-csvutils-0.9.0.jar"/>
+	<classpathentry kind="lib" path="lib/apache-any23-encoding-0.9.0.jar"/>
+	<classpathentry kind="lib" path="lib/apache-any23-mime-0.9.0.jar"/>
+	<classpathentry kind="lib" path="lib/apache-mime4j-core-0.7.2.jar"/>
+	<classpathentry kind="lib" path="lib/apache-mime4j-dom-0.7.2.jar"/>
+	<classpathentry kind="lib" path="lib/asm-debug-all-4.1.jar"/>
+	<classpathentry kind="lib" path="lib/aspectjrt-1.6.11.jar"/>
+	<classpathentry kind="lib" path="lib/bcmail-jdk15-1.45.jar"/>
+	<classpathentry kind="lib" path="lib/bcprov-jdk15-1.45.jar"/>
+	<classpathentry kind="lib" path="lib/boilerpipe-1.1.0.jar"/>
+	<classpathentry kind="lib" path="lib/commons-codec-1.8.jar"/>
+	<classpathentry kind="lib" path="lib/commons-compress-1.5.jar"/>
+	<classpathentry kind="lib" path="lib/commons-csv-1.0-SNAPSHOT-rev1148315.jar"/>
+	<classpathentry kind="lib" path="lib/commons-httpclient-3.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-io-2.4.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang-2.6.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging-1.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/fontbox-1.8.1.jar"/>
+	<classpathentry kind="lib" path="lib/geronimo-stax-api_1.0_spec-1.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/isoparser-1.0-RC-1.jar"/>
+	<classpathentry kind="lib" path="lib/jcommander-1.30.jar"/>
+	<classpathentry kind="lib" path="lib/jdom-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/jempbox-1.8.1.jar"/>
+	<classpathentry kind="lib" path="lib/juniversalchardet-1.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/metadata-extractor-2.6.2.jar"/>
+	<classpathentry kind="lib" path="lib/metainf-services-1.5.jar"/>
+	<classpathentry kind="lib" path="lib/nekohtml-1.9.18.jar"/>
+	<classpathentry kind="lib" path="lib/netcdf-4.2-min.jar"/>
+	<classpathentry kind="lib" path="lib/pdfbox-1.8.1.jar"/>
+	<classpathentry kind="lib" path="lib/poi-3.8.jar"/>
+	<classpathentry kind="lib" path="lib/poi-ooxml-3.8.jar"/>
+	<classpathentry kind="lib" path="lib/poi-ooxml-schemas-3.8.jar"/>
+	<classpathentry kind="lib" path="lib/poi-scratchpad-3.8.jar"/>
+	<classpathentry kind="lib" path="lib/rome-0.9.jar"/>
+	<classpathentry kind="lib" path="lib/sesame-http-client-2.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/sesame-http-protocol-2.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/sesame-model-2.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/sesame-query-2.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/sesame-queryalgebra-evaluation-2.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/sesame-queryalgebra-model-2.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/sesame-queryparser-api-2.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/sesame-queryparser-serql-2.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/sesame-queryparser-sparql-2.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/sesame-queryresultio-api-2.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/sesame-queryresultio-sparqlxml-2.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/sesame-repository-api-2.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/sesame-repository-sail-2.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/sesame-repository-sparql-2.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/sesame-rio-api-2.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/sesame-rio-datatypes-2.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/sesame-rio-languages-2.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/sesame-rio-n3-2.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/sesame-rio-ntriples-2.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/sesame-rio-rdfxml-2.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/sesame-rio-trix-2.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/sesame-rio-turtle-2.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/sesame-sail-api-2.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/sesame-sail-inferencer-2.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/sesame-sail-memory-2.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/sesame-util-2.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-api-1.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/tagsoup-1.2.1.jar"/>
+	<classpathentry kind="lib" path="lib/tika-core-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/tika-parsers-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/vorbis-java-core-0.1.jar"/>
+	<classpathentry kind="lib" path="lib/vorbis-java-tika-0.1.jar"/>
+	<classpathentry kind="lib" path="lib/xercesImpl-2.10.0.jar"/>
+	<classpathentry kind="lib" path="lib/xml-apis-1.4.01.jar"/>
+	<classpathentry kind="lib" path="lib/xmlbeans-2.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/xmpcore-5.1.2.jar"/>
+	<classpathentry kind="lib" path="lib/xz-1.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
