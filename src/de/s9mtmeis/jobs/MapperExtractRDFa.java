@@ -45,11 +45,10 @@ public static class ExtractRDFa extends Mapper<LongWritable, WARCWritable, Text,
 				
 				context.getCounter(MAPPERCOUNTER.RECORDS_IN).increment(1);
 				
-				
-				Pattern pattern = Pattern.compile("(property|typeof|about|resource)\\s*=");
+				// Apply rdfa preprocessing pattern
+				Pattern pattern = Pattern.compile("(property|vocab)\\s*=\"http://schema.org");
 				Matcher matcher = pattern.matcher(pageText);
-				
-				
+								
 				if (matcher.find()) {    
 					// found RDFa pattern
 					

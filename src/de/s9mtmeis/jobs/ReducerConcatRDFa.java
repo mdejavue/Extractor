@@ -12,19 +12,31 @@ import org.apache.hadoop.mapreduce.Reducer;
 		public void reduce(Text key, Iterator<Text> values, Context context )
 			      throws IOException {
 
+			String completeOutString = "!!START!!\\n";
 			
-			while (values.hasNext()) {
-                Text txt = values.next();
-                String inputString = "<start>" + txt.toString() + "<end>";
-                Text out = new Text();
-                out.set(inputString);
-                //System.out.println(inputString);
+			while (values.hasNext()){
+                Text txt = values.next();      
+                
+                String[] split = txt.toString().split(" .");
+                String outString = "";
+                
+                for ( String s : split ) {
+                	if ( s.contains("Offer")) {
+		                outString = outString + s;   
+                	}
+                }
+                completeOutString = "start\\n" + outString + "\\nend\\n";
+			}
+			
+			Text out = new Text();
+			out.set(completeOutString);
                 try {
 					context.write(key, out);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
-				}                
+				}   
+             }
 		  }		
-		}
-	}
+
+
 
