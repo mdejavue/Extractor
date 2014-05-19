@@ -1,4 +1,4 @@
-package de.s9mtmeis.jobs;
+package de.s9mtmeis.jobs.old;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -65,8 +65,19 @@ public static class ExtractRDFa extends Mapper<LongWritable, WARCWritable, Text,
 					/*9*/ String n3 = out.toString("UTF-8");
 
 		        	outKey.set(new Uri(value.getRecord().getHeader().getTargetURI()).getHost().toLowerCase());
-		        	outVal.set(n3);
 		        	
+		        	
+		        	String outString = "";     	   
+	                String[] split = n3.split(" \\.");
+	                
+	                for ( String s : split ) {
+	                	if ( s.contains("Offer")) {
+			                outString = outString + s;   
+	                	}
+	                }
+	               
+		        	
+		        	outVal.set(outString);
 		        	context.write(outKey, outVal);
 				}
 	        }
