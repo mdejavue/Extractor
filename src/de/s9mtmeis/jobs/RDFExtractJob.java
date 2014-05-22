@@ -16,7 +16,6 @@ import org.apache.hadoop.util.ToolRunner;
 
 import com.martinkl.warc.mapreduce.WARCInputFormat;
 
-import de.s9mtmeis.jobs.old.JobExtractRDFa;
 
 /**
  * Runs the Hadoop Job of the data extract
@@ -31,7 +30,7 @@ public class RDFExtractJob extends Configured implements Tool {
 
 
   public static void main(String[] args) throws Exception {
-	  int res = ToolRunner.run(new Configuration(), new JobExtractRDFa(), args);
+	  int res = ToolRunner.run(new Configuration(), new RDFExtractJob(), args);
 		System.exit(res);
 	}
 

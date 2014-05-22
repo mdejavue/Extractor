@@ -10,6 +10,7 @@ import org.apache.any23.source.DocumentSource;
 import org.apache.any23.source.StringDocumentSource;
 import org.apache.any23.writer.NTriplesWriter;
 import org.apache.any23.writer.TripleHandler;
+import org.apache.any23.writer.TurtleWriter;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -55,7 +56,7 @@ public static class ExtractRDFa extends Mapper<LongWritable, WARCWritable, Text,
 					/*1*/ Any23 runner = new Any23();
 					/*4*/ DocumentSource source = new StringDocumentSource(pageText, value.getRecord().getHeader().getTargetURI(), value.getRecord().getHeader().getContentType());
 					/*5*/ ByteArrayOutputStream out = new ByteArrayOutputStream();
-					/*6*/ TripleHandler handler = new NTriplesWriter(out);
+					/*6*/ TripleHandler handler = new TurtleWriter(out);
 					      try {
 					/*7*/     runner.extract(source, handler);
 					      } finally {
@@ -64,20 +65,20 @@ public static class ExtractRDFa extends Mapper<LongWritable, WARCWritable, Text,
 					      	      
 					/*9*/ String n3 = out.toString("UTF-8");
 
-		        	outKey.set(new Uri(value.getRecord().getHeader().getTargetURI()).getHost().toLowerCase());
+		        	outKey.set("NEW_MAPPER_ENTITY");
+		        	outVal.set(n3);
 		        	
-		        	
-		        	String outString = "";     	   
-	                String[] split = n3.split(" \\.");
-	                
-	                for ( String s : split ) {
-	                	if ( s.contains("Offer")) {
-			                outString = outString + s;   
-	                	}
-	                }
-	               
-		        	
-		        	outVal.set(outString);
+//		        	String outString = "";     	   
+//	                String[] split = n3.split(" \\.");
+//	                
+//	                for ( String s : split ) {
+//	                	if ( s.contains("Offer")) {
+//			                outString = outString + s;   
+//	                	}
+//	                }
+//	               
+//		        	
+//		        	outVal.set(outString);
 		        	context.write(outKey, outVal);
 				}
 	        }
