@@ -1,4 +1,4 @@
-package de.s9mtmeis.jobs.old;
+package de.s9mtmeis.jobs;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -7,52 +7,45 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.any23.Any23;
+import org.apache.any23.filter.IgnoreAccidentalRDFa;
 import org.apache.any23.source.DocumentSource;
 import org.apache.any23.source.StringDocumentSource;
 import org.apache.any23.writer.NTriplesWriter;
+import org.apache.any23.writer.ReportingTripleHandler;
 import org.apache.any23.writer.TripleHandler;
-import org.apache.any23.writer.TurtleWriter;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.log4j.Logger;
 
 import com.martinkl.warc.WARCWritable;
-import com.sun.jndi.toolkit.url.Uri;
 
 
-public class MapperExtractRDFa {
+public class HadoopMapper {
 
 
-	private static final Logger LOG = Logger.getLogger(MapperExtractRDFa.class);
+	private static final Logger LOG = Logger.getLogger(HadoopMapper.class);
 	protected static enum MAPPERCOUNTER {
 		RECORDS_IN,
 		EXCEPTIONS
 	}
 
-	public static class ExtractRDFa extends Mapper<LongWritable, WARCWritable, Text, Text> {
-
+	public static class Extractor extends Mapper<LongWritable, WARCWritable, Text, Text> {
 		private Text outKey = new Text();
 		private Text outVal = new Text();
-
-		// Create patterns
-		//private Pattern pattern_1 = Pattern.compile("(property|vocab)\\s*=\"http://schema.org");
-
-		private Pattern pt_html_rdfa = Pattern.compile("(property|typeof|about|resource)\\s*=");
-		private Pattern pt_html_microdata = Pattern.compile("(itemscope|itemprop\\s*=)");
-		private Pattern pt_html_mf_vproduct = Pattern.compile("hproduct");
 		private ArrayList<Pattern> patterns = new ArrayList<Pattern>();
-
-		public ExtractRDFa() {
-			patterns.add(pt_html_rdfa);
-			patterns.add(pt_html_microdata);
-			patterns.add(pt_html_mf_vproduct);
-		}
 
 		@Override
 		public void map(LongWritable key, WARCWritable value, Context context) throws IOException {
+			
+			for (String m : context.getConfiguration().getStringCollection("matchers"))
+			{
+				LOG.info("compiling matcher pattern: " + m);
+				patterns.add(Pattern.compile(m));
+			}
+			
+			
 			try {
-
 				if ( value.getRecord().getHeader().getContentType().equals("application/http; msgtype=response")) {
 					//Get the text content as a string.
 					byte[] rawData = value.getRecord().getContent();
@@ -78,7 +71,7 @@ public class MapperExtractRDFa {
 						/*1*/ Any23 runner = new Any23();
 						/*4*/ DocumentSource source = new StringDocumentSource(pageText, value.getRecord().getHeader().getTargetURI(), value.getRecord().getHeader().getContentType());
 						/*5*/ ByteArrayOutputStream out = new ByteArrayOutputStream();
-						/*6*/ TripleHandler handler = new NTriplesWriter(out);
+						/*6*/ TripleHandler handler = new ReportingTripleHandler(new IgnoreAccidentalRDFa(new NTriplesWriter(out), true));
 						try {
 							/*7*/     runner.extract(source, handler);
 						} finally {
