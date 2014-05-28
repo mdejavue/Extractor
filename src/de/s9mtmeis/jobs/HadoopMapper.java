@@ -15,8 +15,6 @@ import org.apache.any23.extractor.html.HProductExtractorFactory;
 import org.apache.any23.filter.IgnoreAccidentalRDFa;
 import org.apache.any23.source.DocumentSource;
 import org.apache.any23.source.StringDocumentSource;
-import org.apache.any23.vocab.SINDICE;
-import org.apache.any23.vocab.XHTML;
 import org.apache.any23.writer.NTriplesWriter;
 import org.apache.any23.writer.ReportingTripleHandler;
 import org.apache.any23.writer.TripleHandler;
@@ -40,11 +38,19 @@ public class HadoopMapper {
 	public static class Extractor extends Mapper<LongWritable, WARCWritable, Text, Text> {
 		private Text outKey = new Text();
 		private Text outVal = new Text();
-		private ArrayList<Pattern> patterns;
+		
 		public final static List<String> EXTRACTORS = 
 				Arrays.asList(		"html-rdfa",
 									"html-microdata",
 									"html-mf-hproduct" );
+		
+		public final static List<Pattern> defaultPatterns = 
+				Arrays.asList(		Pattern.compile("(property|typeof|about|resource)\\s*="),
+									Pattern.compile("(itemscope|itemprop\\s*=)"),
+									Pattern.compile("hproduct"));
+		
+		private List<Pattern> customPatterns;
+
 		private Any23 runner;
 
 		public Extractor() {
@@ -60,12 +66,15 @@ public class HadoopMapper {
 		@Override
 		public void map(LongWritable key, WARCWritable value, Context context) throws IOException {
 			
-			if (patterns == null) { // do this only once :)
-				patterns = new ArrayList<Pattern>();
-				for (String m : context.getConfiguration().get("matchers").split(" ;; "))
-				{
-					LOG.info("compiling matcher pattern: " + m);					
-					patterns.add(Pattern.compile(m));
+			if (customPatterns == null) { // do this only once :)
+				customPatterns = new ArrayList<Pattern>();
+				
+				if (context.getConfiguration().get("matchers") != null) {
+					for (String m : context.getConfiguration().get("matchers").split(" ;; "))
+					{
+						LOG.info("compiling matcher pattern: " + m);					
+						customPatterns.add(Pattern.compile(m));
+					}
 				}
 			}
 			
@@ -74,23 +83,35 @@ public class HadoopMapper {
 					//Get the text content as a string.
 					byte[] rawData = value.getRecord().getContent();
 					String pageText = new String(rawData);
-					boolean foundSth = false;
+					boolean passedDefaults = false;
+					boolean passedCustoms = false;
 
 					// Increment for LOG
 					context.getCounter(MAPPERCOUNTER.RECORDS_IN).increment(1);
 					
 					
 					// Check if patterns occur in document
-					for (Pattern p : patterns)
+					for (Pattern p : defaultPatterns)
 					{
 						Matcher m = p.matcher(pageText);
 						if (m.find()) {
-							foundSth = true;
+							passedDefaults = true;
 							break;
 						}
 					}
 
-					if (foundSth) {    
+					if (passedDefaults) {
+						for (Pattern p : customPatterns)
+						{
+							Matcher m = p.matcher(pageText);
+							if (m.find()) {
+								passedCustoms = true;
+								break;
+							}
+						}
+					}
+
+					if (passedDefaults && (passedCustoms || customPatterns.size() == 0)) {    
 
 						/*4*/ DocumentSource source = new StringDocumentSource(pageText, value.getRecord().getHeader().getTargetURI(), value.getRecord().getHeader().getContentType());
 						/*5*/ ByteArrayOutputStream out = new ByteArrayOutputStream();
