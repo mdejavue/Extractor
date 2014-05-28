@@ -12,6 +12,9 @@ import org.apache.any23.Any23;
 import org.apache.any23.extractor.ExtractorGroup;
 import org.apache.any23.extractor.ExtractorRegistryImpl;
 import org.apache.any23.extractor.html.HProductExtractorFactory;
+import org.apache.any23.extractor.microdata.MicrodataExtractorFactory;
+import org.apache.any23.extractor.rdfa.RDFa11ExtractorFactory;
+import org.apache.any23.extractor.rdfa.RDFaExtractorFactory;
 import org.apache.any23.filter.IgnoreAccidentalRDFa;
 import org.apache.any23.source.DocumentSource;
 import org.apache.any23.source.StringDocumentSource;
@@ -29,7 +32,7 @@ import com.martinkl.warc.WARCWritable;
 public class HadoopMapper {
 
 
-	private static final Logger LOG = Logger.getLogger(HadoopJob.class); //?? right?
+	private static final Logger LOG = Logger.getLogger(HadoopMapper.class);
 	protected static enum MAPPERCOUNTER {
 		RECORDS_IN,
 		EXCEPTIONS
@@ -41,6 +44,7 @@ public class HadoopMapper {
 		
 		public final static List<String> EXTRACTORS = 
 				Arrays.asList(		"html-rdfa",
+									"html-rdfa11",
 									"html-microdata",
 									"html-mf-hproduct" );
 		
@@ -55,6 +59,9 @@ public class HadoopMapper {
 
 		public Extractor() {
 			// found RDFa pattern
+			ExtractorRegistryImpl.getInstance().register(new RDFaExtractorFactory());
+			ExtractorRegistryImpl.getInstance().register(new RDFa11ExtractorFactory());
+			ExtractorRegistryImpl.getInstance().register(new MicrodataExtractorFactory());
 			ExtractorRegistryImpl.getInstance().register(new HProductExtractorFactory());
 			LOG.info("Custom Extractor (HProduct) has been registered");
 			ExtractorGroup extractorGroup = ExtractorRegistryImpl.getInstance().getExtractorGroup(EXTRACTORS);
