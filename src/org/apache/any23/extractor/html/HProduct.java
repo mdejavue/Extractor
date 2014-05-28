@@ -21,15 +21,15 @@ public class HProduct extends Vocabulary {
 
 	    // Properties.
 	    public URI brand                     = createProperty(NS, "brand");
-	    public URI category               = createProperty(NS, "category");
-	    public URI price          = createProperty(NS, "price");
-	    public URI description           = createProperty(NS, "description");
-	    public URI fn                  = createProperty(NS, "fn");
-	    public URI photo                = createProperty(NS, "photo");
-	    public URI url                 = createProperty(NS, "url");
-	    public URI review              = createProperty(NS, "review");
-	    public URI listing              = createProperty(NS, "listing");
-	    public URI identifier         = createProperty(NS, "identifier");
+	    public URI category              	 = createProperty(NS, "category");
+	    public URI price         			 = createProperty(NS, "price");
+	    public URI description         		 = createProperty(NS, "description");
+	    public URI fn                  		 = createProperty(NS, "fn");
+	    public URI photo               		 = createProperty(NS, "photo");
+	    public URI url                		 = createProperty(NS, "url");
+	    public URI review             		 = createProperty(NS, "review");
+	    public URI listing            		 = createProperty(NS, "listing");
+	    public URI identifier        		 = createProperty(NS, "identifier");
 
 	    private HProduct() {
 	        super(NS);

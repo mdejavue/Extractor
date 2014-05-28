@@ -19,7 +19,7 @@ public class HProductExtractorFactory extends SimpleExtractorFactory<HProductExt
     
     public static final Prefixes PREFIXES = PopularPrefixes.createSubset("rdf");
 
-    private static final ExtractorDescription descriptionInstance = new HRecipeExtractorFactory();
+    private static final ExtractorDescription descriptionInstance = new HProductExtractorFactory();
     
     public HProductExtractorFactory() {
         super(

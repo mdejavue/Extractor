@@ -43,14 +43,14 @@ public class HadoopMapper {
 		private Text outVal = new Text();
 		
 		public final static List<String> EXTRACTORS = 
-				Arrays.asList(		"html-rdfa",
-									"html-rdfa11",
-									"html-microdata",
+				Arrays.asList(		//"html-rdfa",
+									//"html-rdfa11",
+									//"html-microdata",
 									"html-mf-hproduct" );
 		
 		public final static List<Pattern> defaultPatterns = 
-				Arrays.asList(		Pattern.compile("(property|typeof|about|resource)\\s*="),
-									Pattern.compile("(itemscope|itemprop\\s*=)"),
+				Arrays.asList(		//Pattern.compile("(property|typeof|about|resource)\\s*="),
+									//Pattern.compile("(itemscope|itemprop\\s*=)"),
 									Pattern.compile("hproduct"));
 		
 		private List<Pattern> customPatterns;
@@ -59,9 +59,9 @@ public class HadoopMapper {
 
 		public Extractor() {
 			// found RDFa pattern
-			ExtractorRegistryImpl.getInstance().register(new RDFaExtractorFactory());
-			ExtractorRegistryImpl.getInstance().register(new RDFa11ExtractorFactory());
-			ExtractorRegistryImpl.getInstance().register(new MicrodataExtractorFactory());
+			//ExtractorRegistryImpl.getInstance().register(new RDFaExtractorFactory());
+			//ExtractorRegistryImpl.getInstance().register(new RDFa11ExtractorFactory());
+			//ExtractorRegistryImpl.getInstance().register(new MicrodataExtractorFactory());
 			ExtractorRegistryImpl.getInstance().register(new HProductExtractorFactory());
 			LOG.info("Custom Extractor (HProduct) has been registered");
 			ExtractorGroup extractorGroup = ExtractorRegistryImpl.getInstance().getExtractorGroup(EXTRACTORS);
