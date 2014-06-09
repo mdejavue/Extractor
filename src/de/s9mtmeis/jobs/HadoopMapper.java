@@ -9,12 +9,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.any23.Any23;
+import org.apache.any23.extractor.ExtractorFactory;
 import org.apache.any23.extractor.ExtractorGroup;
 import org.apache.any23.extractor.ExtractorRegistryImpl;
 import org.apache.any23.extractor.html.HProductExtractorFactory;
 import org.apache.any23.extractor.microdata.MicrodataExtractorFactory;
 import org.apache.any23.extractor.rdfa.RDFa11ExtractorFactory;
-import org.apache.any23.extractor.rdfa.RDFaExtractorFactory;
 import org.apache.any23.filter.IgnoreAccidentalRDFa;
 import org.apache.any23.source.DocumentSource;
 import org.apache.any23.source.StringDocumentSource;
@@ -43,28 +43,27 @@ public class HadoopMapper {
 		private Text outVal = new Text();
 		
 		public final static List<String> EXTRACTORS = 
-				Arrays.asList(		//"html-rdfa",
-									//"html-rdfa11",
-									//"html-microdata",
+				Arrays.asList(		"html-rdfa11",
+									"html-microdata",
 									"html-mf-hproduct" );
 		
 		public final static List<Pattern> defaultPatterns = 
-				Arrays.asList(		//Pattern.compile("(property|typeof|about|resource)\\s*="),
-									//Pattern.compile("(itemscope|itemprop\\s*=)"),
+				Arrays.asList(		Pattern.compile("(property|typeof|about|resource)\\s*="),
+									Pattern.compile("(itemscope|itemprop\\s*=)"),
 									Pattern.compile("hproduct"));
 		
-		private List<Pattern> customPatterns;
+		private List<Pattern> positivePatterns;
+		private List<Pattern> negativePatterns;
 
 		private Any23 runner;
 
-		public Extractor() {
-			// found RDFa pattern
-			//ExtractorRegistryImpl.getInstance().register(new RDFaExtractorFactory());
-			//ExtractorRegistryImpl.getInstance().register(new RDFa11ExtractorFactory());
-			//ExtractorRegistryImpl.getInstance().register(new MicrodataExtractorFactory());
+		public Extractor() {			
+			ExtractorRegistryImpl.getInstance().register(new RDFa11ExtractorFactory());
+			ExtractorRegistryImpl.getInstance().register(new MicrodataExtractorFactory());
 			ExtractorRegistryImpl.getInstance().register(new HProductExtractorFactory());
-			LOG.info("Custom Extractor (HProduct) has been registered");
 			ExtractorGroup extractorGroup = ExtractorRegistryImpl.getInstance().getExtractorGroup(EXTRACTORS);
+			
+			
 			runner = new Any23(extractorGroup);
 			LOG.info("Any23 runner has been initialized with extractorGroup");
 		}
@@ -73,17 +72,24 @@ public class HadoopMapper {
 		@Override
 		public void map(LongWritable key, WARCWritable value, Context context) throws IOException {
 			
-			if (customPatterns == null) { // do this only once :)
-				customPatterns = new ArrayList<Pattern>();
+			if (positivePatterns == null) { // do this only once :)
+				positivePatterns = new ArrayList<Pattern>();
+				negativePatterns = new ArrayList<Pattern>();
 				
-				if (context.getConfiguration().get("matchers") != null) {
+				if (context.getConfiguration().get("matchers") != null && context.getConfiguration().get("matchers").length() > 1 ) {
 					for (String m : context.getConfiguration().get("matchers").split(" ;; "))
 					{
-						LOG.info("compiling matcher pattern: " + m);					
-						customPatterns.add(Pattern.compile(m));
+						LOG.info("compiling matcher pattern: " + m);	
+						
+						if ( m.startsWith("!")) {
+							negativePatterns.add(Pattern.compile(m.substring(1)));
+						}
+						else
+						{
+							positivePatterns.add(Pattern.compile(m));
+						}
 					}
 				}
-			}
 			
 			try {
 				if ( value.getRecord().getHeader().getContentType().equals("application/http; msgtype=response")) {
@@ -91,7 +97,8 @@ public class HadoopMapper {
 					byte[] rawData = value.getRecord().getContent();
 					String pageText = new String(rawData);
 					boolean passedDefaults = false;
-					boolean passedCustoms = false;
+					boolean foundPositives = false;
+					boolean foundNegatives = false;
 
 					// Increment for LOG
 					context.getCounter(MAPPERCOUNTER.RECORDS_IN).increment(1);
@@ -108,17 +115,29 @@ public class HadoopMapper {
 					}
 
 					if (passedDefaults) {
-						for (Pattern p : customPatterns)
+						for (Pattern p : positivePatterns)
 						{
 							Matcher m = p.matcher(pageText);
 							if (m.find()) {
-								passedCustoms = true;
+								foundPositives = true;
+								break;
+							}
+						}
+						
+						for (Pattern p : negativePatterns)
+						{
+							Matcher m = p.matcher(pageText);
+							if (m.find()) {
+								foundNegatives = true;
 								break;
 							}
 						}
 					}
+					
 
-					if (passedDefaults && (passedCustoms || customPatterns.size() == 0)) {    
+					if (	passedDefaults 
+							&& (foundPositives || positivePatterns.size() == 0) 
+							&& (!foundNegatives || negativePatterns.size() == 0)) {    
 
 						/*4*/ DocumentSource source = new StringDocumentSource(pageText, value.getRecord().getHeader().getTargetURI(), value.getRecord().getHeader().getContentType());
 						/*5*/ ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -144,4 +163,5 @@ public class HadoopMapper {
 			}
 		}
 	}
+}
 }

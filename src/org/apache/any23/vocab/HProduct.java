@@ -1,4 +1,5 @@
-package org.apache.any23.extractor.html;
+package org.apache.any23.vocab;
+
 import org.apache.any23.vocab.SINDICE;
 import org.apache.any23.vocab.Vocabulary;
 import org.openrdf.model.URI;
