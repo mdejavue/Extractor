@@ -37,7 +37,7 @@ public class HadoopJob extends Configured implements Tool {
 	      LOG.info("adding config parameters from command line:");
 	      for ( String s : args)
 	      {
-	    	  String[] split = s.split("=",2);
+	    	  String[] split = s.split("=", 2);
 	    	  LOG.info("adding key " + split[0] + " with value " + split[1]);
 	    	  this.getConf().set(split[0], split[1]);
 	      }

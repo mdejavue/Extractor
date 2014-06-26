@@ -66,9 +66,9 @@ public class HadoopMapper {
 	        AVAILABLE_EXTRACTORS = Collections.unmodifiableMap(aMap);
 	    }
 		
-		private ArrayList<String> EXTRACTORS = new ArrayList<String>();
-		private ArrayList<Pattern> POSITIVE_PATTERNS = new ArrayList<Pattern>();
-		private ArrayList<Pattern> NEGATIVE_PATTERNS = new ArrayList<Pattern>();
+		private static ArrayList<String> EXTRACTORS = new ArrayList<String>();
+		private static ArrayList<Pattern> POSITIVE_PATTERNS = new ArrayList<Pattern>();
+		private static ArrayList<Pattern> NEGATIVE_PATTERNS = new ArrayList<Pattern>();
 
 		
 		private void registerExtractors(List<String> EXTRACTORS) {
@@ -99,7 +99,6 @@ public class HadoopMapper {
 
 		private void configureExtraction(Context context) {
 			
-			ArrayList<String> EXTRACTORS = new ArrayList<String>();
 			String extractorParms = context.getConfiguration().get("extractors");
 			String matcherParms = context.getConfiguration().get("matchers");			
 			
@@ -135,8 +134,9 @@ public class HadoopMapper {
 		@Override
 		public void map(LongWritable key, WARCWritable value, Context context) throws IOException {
 			
-			if (EXTRACTORS.isEmpty())
+			if (EXTRACTORS.isEmpty()) {
 				configureExtraction(context); // do this only once :)
+			}
 				
 			try {
 				if ( value.getRecord().getHeader().getContentType().equals("application/http; msgtype=response")) {
@@ -179,11 +179,12 @@ public class HadoopMapper {
 						/*8*/ handler.close();
 						}
 
-						/*9*/ String n3 = out.toString("UTF-16");
+						/*9*/ String n3 = out.toString("UTF-8");
 
 						OUT_KEY.set("NEW_MAPPER_ENTITY" 
 										+ "::" + value.getRecord().getHeader().getTargetURI()
-										+ "::" + value.getRecord().getHeader().getDateString());
+										+ "::" + value.getRecord().getHeader().getDateString()
+										+ "\n");
 						OUT_VAL.set(n3);
 
 						context.write(OUT_KEY, OUT_VAL);
