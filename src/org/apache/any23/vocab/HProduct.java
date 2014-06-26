@@ -1,12 +1,11 @@
 package org.apache.any23.vocab;
 
-import org.apache.any23.vocab.SINDICE;
 import org.apache.any23.vocab.Vocabulary;
 import org.openrdf.model.URI;
 
 
 public class HProduct extends Vocabulary {
-	 public static final String NS = SINDICE.NS + "hproduct/";
+	 public static final String NS = "http://microformats.org/" + "hproduct/";
 
 	    private static HProduct instance;
 
