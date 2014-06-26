@@ -72,7 +72,7 @@ public class HProductExtractor extends EntityBasedMicroformatExtractor {
     }
 
     /**
-     * Adds the <code>instruction</code> triples.
+     * Adds the <code>description</code> triples.
      *
      * @param fragment
      * @param product
@@ -82,7 +82,7 @@ public class HProductExtractor extends EntityBasedMicroformatExtractor {
     }
 
     /**
-     * Adds the <code>instruction</code> triples.
+     * Adds the <code>brand</code> triples.
      *
      * @param fragment
      * @param product
@@ -92,7 +92,7 @@ public class HProductExtractor extends EntityBasedMicroformatExtractor {
     }
 
     /**
-     * Adds the <code>instruction</code> triples.
+     * Adds the <code>category</code> triples.
      *
      * @param fragment
      * @param product
@@ -102,7 +102,7 @@ public class HProductExtractor extends EntityBasedMicroformatExtractor {
     }
 
     /**
-     * Adds the <code>instruction</code> triples.
+     * Adds the <code>price</code> triples.
      *
      * @param fragment
      * @param product
@@ -126,7 +126,7 @@ public class HProductExtractor extends EntityBasedMicroformatExtractor {
     }
 
     /**
-     * Adds the <code>instruction</code> triples.
+     * Adds the <code>review</code> triples.
      *
      * @param fragment
      * @param product
@@ -136,7 +136,7 @@ public class HProductExtractor extends EntityBasedMicroformatExtractor {
     }
 
     /**
-     * Adds the <code>instruction</code> triples.
+     * Adds the <code>url</code> triples.
      *
      * @param fragment
      * @param product
@@ -146,7 +146,7 @@ public class HProductExtractor extends EntityBasedMicroformatExtractor {
     }
 
     /**
-     * Adds the <code>instruction</code> triples.
+     * Adds the <code>listing</code> triples.
      *
      * @param fragment
      * @param product
@@ -156,7 +156,7 @@ public class HProductExtractor extends EntityBasedMicroformatExtractor {
     }
 
     /**
-     * Adds the <code>instruction</code> triples.
+     * Adds the <code>identifier</code> triples.
      *
      * @param fragment
      * @param product

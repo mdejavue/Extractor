@@ -32,7 +32,7 @@ import com.martinkl.warc.WARCWritable;
 public class HadoopMapper {
 
 
-	private static final Logger LOG = Logger.getLogger(HadoopMapper.class);
+	private static final Logger LOG = Logger.getLogger(HadoopJob.class);
 	protected static enum MAPPERCOUNTER {
 		RECORDS_IN,
 		EXCEPTIONS
@@ -136,8 +136,8 @@ public class HadoopMapper {
 					
 
 					if (	passedDefaults 
-							&& (foundPositives || positivePatterns.size() == 0) 
-							&& (!foundNegatives || negativePatterns.size() == 0)) {    
+							&& (foundPositives || positivePatterns.size() < 1) 
+							&& (!foundNegatives || negativePatterns.size() < 1)) {    
 
 						/*4*/ DocumentSource source = new StringDocumentSource(pageText, value.getRecord().getHeader().getTargetURI(), value.getRecord().getHeader().getContentType());
 						/*5*/ ByteArrayOutputStream out = new ByteArrayOutputStream();
