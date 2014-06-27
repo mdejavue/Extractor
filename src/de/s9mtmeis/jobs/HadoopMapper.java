@@ -60,8 +60,17 @@ public class HadoopMapper {
 		public final static Map<String, Class<?>> AVAILABLE_EXTRACTORS;
 		static {
 	        Map<String, Class<?>> aMap = new HashMap<String, Class<?>>();
+	        aMap.put("html-rdfa", RDFaExtractorFactory.class);
 	        aMap.put("html-rdfa11", RDFa11ExtractorFactory.class);
 	        aMap.put("html-microdata", MicrodataExtractorFactory.class);
+	        aMap.put("html-mf-adr", AdrExtractorFactory.class);
+	        aMap.put("html-mf-geo", GeoExtractorFactory.class);
+	        aMap.put("html-mf-hcalendar", HCalendarExtractorFactory.class);
+	        aMap.put("html-mf-hcard", HCardExtractorFactory.class);
+	        aMap.put("html-mf-hlisting", HListingExtractorFactory.class);
+	        aMap.put("html-mf-hrecipe", HRecipeExtractorFactory.class);
+	        aMap.put("html-mf-hresume", HResumeExtractorFactory.class);
+	        aMap.put("html-mf-hreview", HReviewExtractorFactory.class);
 	        aMap.put("html-mf-hproduct", HProductExtractorFactory.class);
 	        AVAILABLE_EXTRACTORS = Collections.unmodifiableMap(aMap);
 	    }
@@ -81,19 +90,6 @@ public class HadoopMapper {
 					continue;
 				}
 			}
-			/*
-			ExtractorRegistryImpl.getInstance().register(new RDFaExtractorFactory());
-			ExtractorRegistryImpl.getInstance().register(new RDFa11ExtractorFactory());
-			ExtractorRegistryImpl.getInstance().register(new MicrodataExtractorFactory());			
-			ExtractorRegistryImpl.getInstance().register(new AdrExtractorFactory());
-			ExtractorRegistryImpl.getInstance().register(new GeoExtractorFactory());			
-			ExtractorRegistryImpl.getInstance().register(new HCalendarExtractorFactory());
-			ExtractorRegistryImpl.getInstance().register(new HCardExtractorFactory());
-			ExtractorRegistryImpl.getInstance().register(new HListingExtractorFactory());
-			ExtractorRegistryImpl.getInstance().register(new HRecipeExtractorFactory());
-			ExtractorRegistryImpl.getInstance().register(new HResumeExtractorFactory());
-			ExtractorRegistryImpl.getInstance().register(new HReviewExtractorFactory());			
-			ExtractorRegistryImpl.getInstance().register(new HProductExtractorFactory()); */
 		}
 		
 
@@ -142,7 +138,9 @@ public class HadoopMapper {
 				if ( value.getRecord().getHeader().getContentType().equals("application/http; msgtype=response")) {
 					//Get the text content as a string.
 					byte[] rawData = value.getRecord().getContent();
+					String headerText = new String(value.getRecord().getHeader().toString());
 					String pageText = new String(rawData);
+					String matcherText = headerText + pageText;
 					
 					boolean foundPositives = true;
 					boolean foundNegatives = false;
@@ -152,7 +150,7 @@ public class HadoopMapper {
 					
 					for (Pattern p : POSITIVE_PATTERNS)
 					{
-						Matcher m = p.matcher(pageText);
+						Matcher m = p.matcher(matcherText);
 						if (m.find()) {
 							break;
 						}
@@ -161,7 +159,7 @@ public class HadoopMapper {
 					
 					for (Pattern p : NEGATIVE_PATTERNS)
 					{
-						Matcher m = p.matcher(pageText);
+						Matcher m = p.matcher(matcherText);
 						if (m.find()) {
 							foundNegatives = true;
 							break;
