@@ -43,7 +43,6 @@ import com.martinkl.warc.WARCWritable;
 
 public class HadoopMapper {
 
-
 	private static final Logger LOG = Logger.getLogger(HadoopJob.class);
 	protected static enum MAPPERCOUNTER {
 		RECORDS_IN,
@@ -56,7 +55,9 @@ public class HadoopMapper {
 		private Text OUT_KEY = new Text();
 		private Text OUT_VAL = new Text();
 
-		
+		 /**
+	     * List of extractors available by the extractor parameter. Add new extractors here.
+	     **/
 		public final static Map<String, Class<?>> AVAILABLE_EXTRACTORS;
 		static {
 	        Map<String, Class<?>> aMap = new HashMap<String, Class<?>>();
@@ -79,7 +80,9 @@ public class HadoopMapper {
 		private static ArrayList<Pattern> POSITIVE_PATTERNS = new ArrayList<Pattern>();
 		private static ArrayList<Pattern> NEGATIVE_PATTERNS = new ArrayList<Pattern>();
 
-		
+		 /**
+	     * Registers the extractors given by the extractor parameter.
+	     **/
 		private void registerExtractors(List<String> EXTRACTORS) {
 			
 			for ( String descriptor : EXTRACTORS) {
@@ -92,7 +95,9 @@ public class HadoopMapper {
 			}
 		}
 		
-
+		/**
+	     * Sets up matchers given by the matcher parameter and initializes Any23 with extractorGroup.
+	     **/
 		private void configureExtraction(Context context) {
 			
 			String extractorParms = context.getConfiguration().get("extractors");
@@ -131,12 +136,14 @@ public class HadoopMapper {
 		public void map(LongWritable key, WARCWritable value, Context context) throws IOException {
 			
 			if (EXTRACTORS.isEmpty()) {
-				configureExtraction(context); // do this only once :)
+				configureExtraction(context); // This is done only once.
 			}
 				
 			try {
+				// Only process data that is in http response format.
 				if ( value.getRecord().getHeader().getContentType().equals("application/http; msgtype=response")) {
-					//Get the text content as a string.
+					
+					//Get the content values from WARC record
 					byte[] rawData = value.getRecord().getContent();
 					String headerText = new String(value.getRecord().getHeader().toString());
 					String pageText = new String(rawData);
@@ -148,6 +155,7 @@ public class HadoopMapper {
 					// Increment for LOG
 					context.getCounter(MAPPERCOUNTER.RECORDS_IN).increment(1);											
 					
+					// Check for positive matches
 					for (Pattern p : POSITIVE_PATTERNS)
 					{
 						Matcher m = p.matcher(matcherText);
@@ -157,6 +165,7 @@ public class HadoopMapper {
 						foundPositives = false;
 					}
 					
+					// Check for negative matches
 					for (Pattern p : NEGATIVE_PATTERNS)
 					{
 						Matcher m = p.matcher(matcherText);
@@ -166,19 +175,31 @@ public class HadoopMapper {
 						}
 					}
 
+					// Progress only if positive match is found but no negative 
 					if ( foundPositives && !foundNegatives) {    
 
-						/*4*/ DocumentSource source = new StringDocumentSource(pageText, value.getRecord().getHeader().getTargetURI(), value.getRecord().getHeader().getContentType());
-						/*5*/ ByteArrayOutputStream out = new ByteArrayOutputStream();
-						/*6*/ TripleHandler handler = new ReportingTripleHandler(new IgnoreAccidentalRDFa(new NTriplesWriter(out), true));
+						DocumentSource source = new StringDocumentSource(
+															pageText,
+															value.getRecord().getHeader().getTargetURI(),
+															value.getRecord().getHeader().getContentType());
+						
+						ByteArrayOutputStream out = new ByteArrayOutputStream();
+						
+						// Setup N-Triples Output with Filters for accidental RDFa
+						TripleHandler handler = new ReportingTripleHandler(new IgnoreAccidentalRDFa(new NTriplesWriter(out), true));
+						
+						
 						try {
-						/*7*/ runner.extract(source, handler);
+							// run Any23
+							runner.extract(source, handler);
 						} finally {
-						/*8*/ handler.close();
+							handler.close();
 						}
 
-						/*9*/ String n3 = out.toString("UTF-8");
+						// Copy stream to UTF-8 string. Try other encodings here.
+						String n3 = out.toString("UTF-8");
 
+						// This is how a mapper record looks like: NEW_MAPPER_ENTITY::URI::TIMESTAMP newline N3OUTPUT
 						OUT_KEY.set("NEW_MAPPER_ENTITY" 
 										+ "::" + value.getRecord().getHeader().getTargetURI()
 										+ "::" + value.getRecord().getHeader().getDateString()
